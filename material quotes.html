@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>材料価格計算システム V5</title>
+    <style>
+        body { font-family: "Meiryo", "MS PGothic", sans-serif; background-color: #f4f7f6; margin: 20px; line-height: 1.6; }
+        .container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; }
+        
+        /* タブ切り替え */
+        .tab-nav { display: flex; margin-bottom: -1px; }
+        .tab-btn { padding: 12px 25px; cursor: pointer; border: 1px solid #ccc; background: #e9ecef; border-bottom: none; border-radius: 5px 5px 0 0; margin-right: 5px; }
+        .tab-btn.active { background: white; font-weight: bold; border-top: 4px solid #007bff; border-bottom: 1px solid white; }
+        .tab-content { border: 1px solid #ccc; padding: 25px; background: white; display: none; border-radius: 0 0 5px 5px; }
+        .tab-content.active { display: block; }
+
+        /* テーブルスタイル */
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #bbb; padding: 12px; text-align: center; }
+        th { background-color: #f2f2f2; font-size: 14px; }
+        
+        /* 入力エリア（黒太枠） */
+        .input-box { border: 2.5px solid #000 !important; width: 75px; padding: 6px; text-align: right; font-size: 16px; background-color: #fff; }
+        .unit { font-size: 12px; color: #666; margin-left: 4px; }
+        
+        /* 注意事項スタイル */
+        .note-blue { color: #0000ff; font-weight: bold; margin-bottom: 15px; }
+        .note-red { color: #d9534f; font-weight: bold; margin-bottom: 15px; }
+        .footer-note { border-top: 2px solid #eee; margin-top: 30px; padding-top: 15px; color: #d9534f; font-weight: bold; line-height: 1.8; }
+        
+        .result-cell { background-color: #e3f2fd; font-weight: bold; color: #1565c0; font-size: 18px; }
+        .info-bar { background-color: #fff9c4; padding: 8px 15px; border-radius: 4px; display: inline-block; margin-top: 10px; font-size: 14px; border: 1px solid #fbc02d; }
+        
+        .setting-input { width: 90%; padding: 4px; border: 1px solid #ccc; text-align: center; }
+        .save-btn { margin-top: 25px; padding: 12px 40px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+
+        h3 { border-left: 5px solid #007bff; padding-left: 10px; margin-top: 30px; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tab-nav">
+        <div class="tab-btn active" onclick="showTab('calcPage')">材料計算</div>
+        <div class="tab-btn" onclick="showTab('settingPage')">システム設定</div>
+    </div>
+
+    <div id="calcPage" class="tab-content active">
+        <div class="note-blue">太い黒枠の箇所に寸法を入力してください。</div>
+        
+        <h3>■ 角材 (方材)</h3>
+        <div id="box-info" class="info-bar">材料情報：単価 ¥ -- / 比重 --</div>
+        <table>
+            <tr>
+                <th width="25%">材料選択</th>
+                <th>長さ (L)</th>
+                <th>幅 (W)</th>
+                <th>厚み (H)</th>
+                <th>予想重量 (kg)</th>
+                <th>予想金額 (JPY)</th>
+            </tr>
+            <tr>
+                <td><select id="box-select" onchange="runCalc()" style="width: 100%; padding: 5px; font-size: 16px;"></select></td>
+                <td><input type="number" id="box-l" class="input-box" oninput="runCalc()"><span class="unit">mm</span></td>
+                <td><input type="number" id="box-w" class="input-box" oninput="runCalc()"><span class="unit">mm</span></td>
+                <td><input type="number" id="box-h" class="input-box" oninput="runCalc()"><span class="unit">mm</span></td>
+                <td id="box-weight" class="result-cell">0.000</td>
+                <td id="box-price" class="result-cell">0</td>
+            </tr>
+        </table>
+
+        <h3 style="margin-top: 40px;">■ 丸材 (円材)</h3>
+        <div id="round-info" class="info-bar">材料情報：単価 ¥ -- / 比重 --</div>
+        <table>
+            <tr>
+                <th width="25%">材料選択</th>
+                <th>直径 (D)</th>
+                <th>長さ (H)</th>
+                <th>-</th>
+                <th>予想重量 (kg)</th>
+                <th>予想金額 (JPY)</th>
+            </tr>
+            <tr>
+                <td><select id="round-select" onchange="runCalc()" style="width: 100%; padding: 5px; font-size: 16px;"></select></td>
+                <td><input type="number" id="round-d" class="input-box" oninput="runCalc()"><span class="unit">mm</span></td>
+                <td><input type="number" id="round-h" class="input-box" oninput="runCalc()"><span class="unit">mm</span></td>
+                <td>-</td>
+                <td id="round-weight" class="result-cell">0.000</td>
+                <td id="round-price" class="result-cell">0</td>
+            </tr>
+        </table>
+
+        <div class="footer-note">
+            ※ 注意事項：<br>
+            パイプ材は外径＋３mm <br>
+            内径＋３mm 寸法のばらつきが大きいため注意
+        </div>
+    </div>
+
+    <div id="settingPage" class="tab-content">
+        <h3>システムパラメータ設定</h3>
+        <p class="note-red">※ 比重基準：鋼材 約 7.86 / アルミ 約 2.68 / チタン 約 4.51。変更後は必ず保存ボタンを押してください。</p>
+        
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <h4>角材 設定リスト</h4>
+                <table id="box-set-table">
+                    <tr><th>材質名</th><th>比重</th><th>単価(¥/kg)</th></tr>
+                </table>
+            </div>
+            <div style="flex: 1;">
+                <h4>丸材 設定リスト</h4>
+                <table id="round-set-table">
+                    <tr><th>材質名</th><th>比重</th><th>単価(¥/kg)</th></tr>
+                </table>
+            </div>
+        </div>
+        <center><button class="save-btn" onclick="saveSettings()">設定を保存して更新</button></center>
+    </div>
+</div>
+
+<script>
+    // デフォルトデータ
+    let boxData = [
+        {n: "S45C", d: 7.86, p: 964}, {n: "SKS3", d: 7.86, p: 1200}, {n: "SCM", d: 7.86, p: 3300}, 
+        {n: "SKD", d: 7.86, p: 3800}, {n: "SKH", d: 7.86, p: 4400}, {n: "SUS304", d: 7.93, p: 1600},
+        {n: "AL(5052)", d: 2.68, p: 892}, {n: "SS400(黒皮)", d: 7.86, p: 232}, {n: "SU304(2B)", d: 7.93, p: 1250},
+        {n: "SS400", d: 7.86, p: 664}, {n: "HPM7", d: 7.86, p: 1600}, {n: "真鍮", d: 8.96, p: 1600}
+    ];
+    for(let i=0; i<5; i++) boxData.push({n: "", d: 0, p: 0});
+
+    let roundData = [
+        {n: "S45C", d: 7.86, p: 380}, {n: "SCM435", d: 7.86, p: 400}, {n: "STKM", d: 7.86, p: 680},
+        {n: "SS400", d: 7.86, p: 260}, {n: "GO40F", d: 7.86, p: 1300}, {n: "SUS304 G", d: 7.93, p: 1430},
+        {n: "SUJ2", d: 7.80, p: 650}, {n: "S45C(調質)", d: 7.86, p: 875}, {n: "純チタン", d: 4.51, p: 8400}
+    ];
+    for(let i=0; i<5; i++) roundData.push({n: "", d: 0, p: 0});
+
+    function showTab(id) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function init() {
+        renderSettingTable();
+        refreshSelects();
+        runCalc();
+    }
+
+    function renderSettingTable() {
+        const bt = document.getElementById('box-set-table');
+        const rt = document.getElementById('round-set-table');
+        bt.innerHTML = '<tr><th>材質名</th><th>比重</th><th>単価(¥/kg)</th></tr>' + boxData.map((obj, i) => 
+            `<tr>
+                <td><input type="text" class="setting-input" value="${obj.n}" id="bn-${i}"></td>
+                <td><input type="number" step="0.01" class="setting-input" value="${obj.d}" id="bd-${i}"></td>
+                <td><input type="number" class="setting-input" value="${obj.p}" id="bp-${i}"></td>
+            </tr>`).join('');
+        rt.innerHTML = '<tr><th>材質名</th><th>比重</th><th>単価(¥/kg)</th></tr>' + roundData.map((obj, i) => 
+            `<tr>
+                <td><input type="text" class="setting-input" value="${obj.n}" id="rn-${i}"></td>
+                <td><input type="number" step="0.01" class="setting-input" value="${obj.d}" id="rd-${i}"></td>
+                <td><input type="number" class="setting-input" value="${obj.p}" id="rp-${i}"></td>
+            </tr>`).join('');
+    }
+
+    function refreshSelects() {
+        const bSelect = document.getElementById('box-select');
+        const rSelect = document.getElementById('round-select');
+        bSelect.innerHTML = boxData.map((obj, i) => obj.n ? `<option value="${i}">${obj.n}</option>` : '').join('');
+        rSelect.innerHTML = roundData.map((obj, i) => obj.n ? `<option value="${i}">${obj.n}</option>` : '').join('');
+    }
+
+    function saveSettings() {
+        boxData = boxData.map((_, i) => ({
+            n: document.getElementById(`bn-${i}`).value,
+            d: parseFloat(document.getElementById(`bd-${i}`).value) || 0,
+            p: parseFloat(document.getElementById(`bp-${i}`).value) || 0
+        }));
+        roundData = roundData.map((_, i) => ({
+            n: document.getElementById(`rn-${i}`).value,
+            d: parseFloat(document.getElementById(`rd-${i}`).value) || 0,
+            p: parseFloat(document.getElementById(`rp-${i}`).value) || 0
+        }));
+        refreshSelects();
+        runCalc();
+        alert("設定を保存しました。");
+    }
+
+    function runCalc() {
+        const bIdx = document.getElementById('box-select').value;
+        if(bIdx !== null && boxData[bIdx]) {
+            const mat = boxData[bIdx];
+            document.getElementById('box-info').innerText = `材料情報：${mat.n} | 単価 ¥ ${mat.p.toLocaleString()} /kg | 比重 ${mat.d}`;
+            const bl = parseFloat(document.getElementById('box-l').value) || 0;
+            const bw = parseFloat(document.getElementById('box-w').value) || 0;
+            const bh = parseFloat(document.getElementById('box-h').value) || 0;
+            const bWgt = (bl * bw * bh * mat.d) / 1000000;
+            document.getElementById('box-weight').innerText = bWgt.toFixed(3);
+            document.getElementById('box-price').innerText = "¥ " + Math.round(bWgt * mat.p).toLocaleString();
+        }
+
+        const rIdx = document.getElementById('round-select').value;
+        if(rIdx !== null && roundData[rIdx]) {
+            const mat = roundData[rIdx];
+            document.getElementById('round-info').innerText = `材料情報：${mat.n} | 単価 ¥ ${mat.p.toLocaleString()} /kg | 比重 ${mat.d}`;
+            const rd = parseFloat(document.getElementById('round-d').value) || 0;
+            const rh = parseFloat(document.getElementById('round-h').value) || 0;
+            const rWgt = (Math.pow((rd / 2), 2) * Math.PI * rh * mat.d) / 1000000;
+            document.getElementById('round-weight').innerText = rWgt.toFixed(3);
+            document.getElementById('round-price').innerText = "¥ " + Math.round(rWgt * mat.p).toLocaleString();
+        }
+    }
+
+    init();
+</script>
+
+</body>
+</html>
