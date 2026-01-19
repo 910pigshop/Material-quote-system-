@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Material Calc Mobile</title>
+    <title>Material Calc Mobile - Full Version</title>
     <style>
         :root {
             --primary-color: #007bff;
-            --bg-color: #f2f2f7; /* iOS 背景色 */
+            --bg-color: #f2f2f7; 
             --card-bg: #ffffff;
         }
         body { 
@@ -21,12 +21,12 @@
         /* 語言選擇 Modal */
         #lang-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .lang-modal { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 85%; max-width: 320px; }
-        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 20px; -webkit-appearance: none; }
+        .lang-select { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 20px; }
         .lang-btn { background: var(--primary-color); color: white; width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 17px; font-weight: 600; }
 
-        .container { display: none; padding-bottom: 40px; }
+        .container { display: none; padding-bottom: 100px; }
 
-        /* 分頁導覽列 (底部固定版) */
+        /* 底部導覽 */
         .tabs { 
             display: flex; 
             position: fixed; 
@@ -36,64 +36,39 @@
             backdrop-filter: blur(10px); 
             border-top: 1px solid #d1d1d6;
             z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom); /* iPhone 底部安全區 */
         }
-        .tab { 
-            flex: 1; 
-            padding: 15px 0; 
-            text-align: center; 
-            font-size: 13px; 
-            color: #8e8e93; 
-            font-weight: 500;
-        }
+        .tab { flex: 1; padding: 15px 0; text-align: center; font-size: 13px; color: #8e8e93; font-weight: 500; }
         .tab.active { color: var(--primary-color); }
 
         .tab-content { display: none; padding: 15px; }
         .tab-content.active { display: block; }
 
-        /* 標題與資訊 */
         h3 { font-size: 18px; margin: 20px 0 10px 10px; color: #1c1c1e; }
         .header-note { background: #e5e5ea; padding: 10px; border-radius: 8px; margin: 10px; font-size: 13px; font-weight: 600; text-align: center; }
-        .info-banner { background: #fff9db; padding: 12px; border-radius: 10px; margin: 0 10px 15px 10px; font-size: 14px; border: 1px solid #ffec99; line-height: 1.4; }
+        .info-banner { background: #fff9db; padding: 12px; border-radius: 10px; margin: 0 10px 15px 10px; font-size: 13px; border: 1px solid #ffec99; line-height: 1.4; }
 
-        /* 輸入卡片佈局 */
-        .input-card {
-            background: var(--card-bg);
-            margin: 10px;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        /* 輸入卡片 */
+        .input-card { background: var(--card-bg); margin: 10px; border-radius: 12px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .input-group { display: flex; align-items: center; margin-bottom: 15px; }
         .input-group label { width: 100px; font-size: 15px; color: #3a3a3c; }
-        .input-field { 
-            flex: 1; 
-            border: 2px solid #000; 
-            border-radius: 8px; 
-            padding: 10px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            text-align: center;
-            background: #fff;
-        }
+        .input-field { flex: 1; border: 2.5px solid #000; border-radius: 8px; padding: 10px; font-size: 18px; font-weight: bold; text-align: center; }
         .unit-label { width: 40px; margin-left: 10px; font-size: 14px; color: #8e8e93; }
 
-        /* 結果顯示區域 */
         .result-row { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px dashed #d1d1d6; padding-top: 15px; }
         .result-item { text-align: center; flex: 1; }
-        .result-label { font-size: 12px; color: #8e8e93; margin-bottom: 5px; }
+        .result-label { font-size: 12px; color: #8e8e93; }
         .result-value { font-size: 20px; font-weight: 700; color: #007aff; }
 
-        /* 設定頁面表格 */
         .settings-table-container { overflow-x: auto; background: #fff; border-radius: 12px; margin: 10px; }
-        table { border-collapse: collapse; width: 100%; min-width: 300px; }
+        table { border-collapse: collapse; width: 100%; }
         th, td { border: 1px solid #f2f2f7; padding: 10px 5px; text-align: center; font-size: 12px; }
         .setting-input { width: 90%; border: 1px solid #ccc; border-radius: 4px; padding: 5px; text-align: center; }
         
-        .notes-editor { width: calc(100% - 20px); height: 120px; margin: 10px; border-radius: 10px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; }
-        .btn-save { background: #34c759; color: white; padding: 15px 40px; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; margin: 20px 0 100px 0; width: 80%; }
+        .notes-editor { width: calc(100% - 20px); height: 120px; margin: 10px; border-radius: 10px; border: 1px solid #ccc; padding: 10px; }
+        .btn-save { background: #34c759; color: white; padding: 15px 40px; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; width: 80%; margin: 20px 0; }
         
-        /* 注意事項 */
-        .footer-note { margin: 20px 10px 100px 10px; padding: 15px; background: #fff; border-radius: 12px; border-left: 5px solid #ff3b30; }
+        .footer-note { margin: 20px 10px; padding: 15px; background: #fff; border-radius: 12px; border-left: 5px solid #ff3b30; }
         #display-notes { white-space: pre-wrap; color: #ff3b30; font-size: 14px; font-weight: 600; }
     </style>
 </head>
@@ -123,30 +98,12 @@
                 <select id="box-select" onchange="calculate()" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ccc;"></select>
             </div>
             <div id="box-info" class="info-banner">-</div>
-            <div class="input-group">
-                <label id="th-l">Length (L)</label>
-                <input type="number" id="box-l" class="input-field" oninput="calculate()" onkeydown="handleEnter(event, 'box-w')">
-                <span class="unit-label">mm</span>
-            </div>
-            <div class="input-group">
-                <label id="th-w">Width (W)</label>
-                <input type="number" id="box-w" class="input-field" oninput="calculate()" onkeydown="handleEnter(event, 'box-h')">
-                <span class="unit-label">mm</span>
-            </div>
-            <div class="input-group">
-                <label id="th-h">Height (H)</label>
-                <input type="number" id="box-h" class="input-field" oninput="calculate()" onkeydown="handleFinalEnter(event, ['box-l','box-w','box-h'])">
-                <span class="unit-label">mm</span>
-            </div>
+            <div class="input-group"><label id="th-l">Length (L)</label><input type="number" id="box-l" class="input-field" oninput="calculate()" onkeydown="handleEnter(event, 'box-w')"><span class="unit-label">mm</span></div>
+            <div class="input-group"><label id="th-w">Width (W)</label><input type="number" id="box-w" class="input-field" oninput="calculate()" onkeydown="handleEnter(event, 'box-h')"><span class="unit-label">mm</span></div>
+            <div class="input-group"><label id="th-h">Height (H)</label><input type="number" id="box-h" class="input-field" oninput="calculate()" onkeydown="handleFinalEnter(event, ['box-l','box-w','box-h'])"><span class="unit-label">mm</span></div>
             <div class="result-row">
-                <div class="result-item">
-                    <div class="result-label" id="th-wgt">Weight (kg)</div>
-                    <div id="box-weight" class="result-value">0.000</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label" id="th-price">Price (JPY)</div>
-                    <div id="box-price" class="result-value">¥ 0</div>
-                </div>
+                <div class="result-item"><div class="result-label" id="th-wgt">Weight (kg)</div><div id="box-weight" class="result-value">0.000</div></div>
+                <div class="result-item"><div class="result-label" id="th-price">Price (JPY)</div><div id="box-price" class="result-value">¥ 0</div></div>
             </div>
         </div>
 
@@ -157,52 +114,29 @@
                 <select id="round-select" onchange="calculate()" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ccc;"></select>
             </div>
             <div id="round-info" class="info-banner">-</div>
-            <div class="input-group">
-                <label id="th-d">Diameter (D)</label>
-                <input type="number" id="round-d" class="input-field" oninput="calculate()" onkeydown="handleEnter(event, 'round-h')">
-                <span class="unit-label">mm</span>
-            </div>
-            <div class="input-group">
-                <label id="th-h2">Length (H)</label>
-                <input type="number" id="round-h" class="input-field" oninput="calculate()" onkeydown="handleFinalEnter(event, ['round-d','round-h'])">
-                <span class="unit-label">mm</span>
-            </div>
+            <div class="input-group"><label id="th-d">Diameter (D)</label><input type="number" id="round-d" class="input-field" oninput="calculate()" onkeydown="handleEnter(event, 'round-h')"><span class="unit-label">mm</span></div>
+            <div class="input-group"><label id="th-h2">Length (H)</label><input type="number" id="round-h" class="input-field" oninput="calculate()" onkeydown="handleFinalEnter(event, ['round-d','round-h'])"><span class="unit-label">mm</span></div>
             <div class="result-row">
-                <div class="result-item">
-                    <div class="result-label" id="th-wgt2">Weight (kg)</div>
-                    <div id="round-weight" class="result-value">0.000</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label" id="th-price2">Price (JPY)</div>
-                    <div id="round-price" class="result-value">¥ 0</div>
-                </div>
+                <div class="result-item"><div class="result-label" id="th-wgt2">Weight (kg)</div><div id="round-weight" class="result-value">0.000</div></div>
+                <div class="result-item"><div class="result-label" id="th-price2">Price (JPY)</div><div id="round-price" class="result-value">¥ 0</div></div>
             </div>
         </div>
 
-        <div class="footer-note">
-            <h4 id="ui-note-title" style="margin:0 0 10px 0; font-size:15px;">※ Notes:</h4>
-            <div id="display-notes"></div>
-        </div>
+        <div class="footer-note"><h4 id="ui-note-title" style="margin:0 0 10px 0;">※ Notes:</h4><div id="display-notes"></div></div>
     </div>
 
     <div id="settings-page" class="tab-content">
         <h3 id="ui-setup-title">Settings</h3>
-        <div class="settings-table-container">
-            <h4 id="ui-box-list-name" style="margin:10px;">Square List</h4>
-            <table id="box-settings-table"></table>
-        </div>
-        <div class="settings-table-container">
-            <h4 id="ui-rnd-list-name" style="margin:10px;">Round List</h4>
-            <table id="round-settings-table"></table>
-        </div>
+        <div class="settings-table-container"><h4 id="ui-box-list-name" style="margin:10px;">Square List</h4><table id="box-settings-table"></table></div>
+        <div class="settings-table-container"><h4 id="ui-rnd-list-name" style="margin:10px;">Round List</h4><table id="round-settings-table"></table></div>
         <h4 id="ui-note-edit-title" style="margin:20px 0 10px 10px;">■ Edit Notes</h4>
         <textarea id="notes-input" class="notes-editor"></textarea>
         <center><button class="btn-save" id="btn-save-ui" onclick="saveSettings()">Save</button></center>
     </div>
 
     <div class="tabs">
-        <div class="tab active" id="tab-calc" onclick="openTab(event, 'calc-page')">Calculator</div>
-        <div class="tab" id="tab-setup" onclick="openTab(event, 'settings-page')">Settings</div>
+        <div class="tab active" id="tab-calc" onclick="openTab(event, 'calc-page')">Calc</div>
+        <div class="tab" id="tab-setup" onclick="openTab(event, 'settings-page')">Setup</div>
     </div>
 </div>
 
@@ -215,6 +149,34 @@
     };
 
     let currentLang = 'en';
+
+    // 補回所有 12 種角材與 9 種丸材預設值
+    const defB = [
+        {n:"S45C", d:7.86, p:964}, {n:"SKS3", d:7.86, p:1200}, {n:"SCM", d:7.86, p:3300}, 
+        {n:"SKD", d:7.86, p:3800}, {n:"SKH", d:7.86, p:4400}, {n:"SUS304", d:7.93, p:1600}, 
+        {n:"AL(5052)", d:2.68, p:892}, {n:"SS400(黒皮)", d:7.86, p:232}, {n:"SU304(2B)", d:7.93, p:1250}, 
+        {n:"SS400", d:7.86, p:664}, {n:"HPM7", d:7.86, p:1600}, {n:"真鍮", d:8.96, p:1600}
+    ];
+    const defR = [
+        {n:"S45C", d:7.86, p:380}, {n:"SCM435", d:7.86, p:400}, {n:"STKM", d:7.86, p:680}, 
+        {n:"SS400", d:7.86, p:260}, {n:"GO40F", d:7.86, p:1300}, {n:"SUS304 G", d:7.93, p:1430}, 
+        {n:"SUJ2", d:7.8, p:650}, {n:"S45C(調質)", d:7.86, p:875}, {n:"純チタン", d:4.51, p:8400}
+    ];
+
+    function pad(data, count) { let d = [...data]; for(let i=0; i<count; i++) d.push({n:"", d:"", p:""}); return d; }
+    let boxMaterials = JSON.parse(localStorage.getItem('boxV13')) || pad(defB, 7);
+    let roundMaterials = JSON.parse(localStorage.getItem('rndV13')) || pad(defR, 10);
+    let customNotes = localStorage.getItem('notesV13') || "パイプ材は外徑 + 3 mm\n內徑 + 3 mm 注意";
+
+    function handleEnter(e, next) { if(e.key==="Enter"){ e.preventDefault(); document.getElementById(next).focus(); } }
+    function handleFinalEnter(e, ids) { 
+        if(e.key==="Enter"){ 
+            e.preventDefault(); calculate(); 
+            ids.forEach(id => document.getElementById(id).value = "");
+            calculate(); document.getElementById(ids[0]).focus();
+        } 
+    }
+
     function applyLanguage() {
         currentLang = document.getElementById('lang-picker').value;
         const lang = i18n[currentLang];
@@ -242,22 +204,6 @@
         calculate();
     }
 
-    const defB = [{n:"S45C", d:7.86, p:964}, {n:"SUS304", d:7.93, p:1600}, {n:"AL(5052)", d:2.68, p:892}];
-    const defR = [{n:"S45C", d:7.86, p:380}, {n:"SS400", d:7.86, p:260}];
-    function pad(data, count) { let d = [...data]; while(d.length<count+data.length) d.push({n:"", d:"", p:""}); return d; }
-    let boxMaterials = JSON.parse(localStorage.getItem('boxV12')) || pad(defB, 7);
-    let roundMaterials = JSON.parse(localStorage.getItem('rndV12')) || pad(defR, 10);
-    let customNotes = localStorage.getItem('notesV12') || "パイプ材は外径 + 3 mm\n內径 + 3 mm 注意";
-
-    function handleEnter(e, next) { if(e.key==="Enter"){ e.preventDefault(); document.getElementById(next).focus(); } }
-    function handleFinalEnter(e, ids) { 
-        if(e.key==="Enter"){ 
-            e.preventDefault(); calculate(); 
-            ids.forEach(id => document.getElementById(id).value = "");
-            calculate(); document.getElementById(ids[0]).focus();
-        } 
-    }
-
     function openTab(evt, name) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -280,9 +226,9 @@
         boxMaterials = boxMaterials.map((_,i)=>({n:document.getElementById(`bn-${i}`).value, d:document.getElementById(`bd-${i}`).value, p:document.getElementById(`bp-${i}`).value}));
         roundMaterials = roundMaterials.map((_,i)=>({n:document.getElementById(`rn-${i}`).value, d:document.getElementById(`rd-${i}`).value, p:document.getElementById(`rp-${i}`).value}));
         customNotes = document.getElementById('notes-input').value;
-        localStorage.setItem('boxV12', JSON.stringify(boxMaterials));
-        localStorage.setItem('rndV12', JSON.stringify(roundMaterials));
-        localStorage.setItem('notesV12', customNotes);
+        localStorage.setItem('boxV13', JSON.stringify(boxMaterials));
+        localStorage.setItem('rndV13', JSON.stringify(roundMaterials));
+        localStorage.setItem('notesV13', customNotes);
         renderAll(); calculate(); alert("Saved!");
     }
 
